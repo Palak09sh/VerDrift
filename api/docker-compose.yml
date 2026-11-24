@@ -1,0 +1,20 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: verdrift
+      POSTGRES_PASSWORD: verdrift
+      POSTGRES_DB: verdrift
+    ports: ["5432:5432"]
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - dbdata:/var/lib/postgresql/data
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://verdrift:verdrift@db:5432/verdrift
+    ports: ["3000:3000"]
+    depends_on: [db]
+volumes:
+  dbdata:
